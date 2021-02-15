@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import authService from './api-authorization/AuthorizeService';
+import { getAsync } from '../utils/fetcher';
 
 export default class FetchData extends Component {
   constructor(props) {
@@ -37,25 +37,24 @@ export default class FetchData extends Component {
   }
 
   async populateWeatherData() {
-    const token = await authService.getAccessToken();
-    const response = await fetch('weatherforecast', {
-      headers: !token ? {} : { Authorization: `Bearer ${token}` },
+    this.setState({
+      forecasts: await getAsync('/weatherforecast'),
+      loading: false,
     });
-    const data = await response.json();
-    this.setState({ forecasts: data, loading: false });
   }
 
   render() {
-    const contents = this.state.loading
+    const { loading, forecasts } = this.state;
+    const contents = loading
       ? <p><em>Loading...</em></p>
-      : FetchData.renderForecastsTable(this.state.forecasts);
+      : FetchData.renderForecastsTable(forecasts);
 
     return (
-      <div>
+      <>
         <h1 id="tabelLabel">Weather forecast</h1>
         <p>This component demonstrates fetching data from the server.</p>
         {contents}
-      </div>
+      </>
     );
   }
 }

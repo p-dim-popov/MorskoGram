@@ -11,9 +11,10 @@
         public string Content { get; set; }
 
         [Required]
+        public string CreatorId { get; set; }
         public virtual ApplicationUser Creator { get; set; }
 
-        [Required]
+        public Guid PostId { get; set; }
         public virtual Post Post { get; set; }
     }
 }

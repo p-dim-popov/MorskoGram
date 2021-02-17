@@ -9,7 +9,7 @@ using MorskoGram.Web.API.Data;
 namespace MorskoGram.Web.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210214182528_InitialCreate")]
+    [Migration("20210217070209_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -494,6 +494,9 @@ namespace MorskoGram.Web.API.Migrations
 
                     b.Property<string>("Description")
                         .HasMaxLength(450)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ImageId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ImageLink")

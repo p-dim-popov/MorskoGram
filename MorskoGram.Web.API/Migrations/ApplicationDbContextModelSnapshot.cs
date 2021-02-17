@@ -494,6 +494,9 @@ namespace MorskoGram.Web.API.Migrations
                         .HasMaxLength(450)
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("ImageId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ImageLink")
                         .IsRequired()
                         .HasMaxLength(150)

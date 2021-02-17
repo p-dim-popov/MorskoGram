@@ -38,8 +38,9 @@ namespace MorskoGram.Web.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(this.Configuration.GetConnectionString("Postgres")));
+                // options.UseSqlite(
+                //     Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 

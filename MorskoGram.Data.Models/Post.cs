@@ -13,8 +13,10 @@
 
         [Required, MaxLength(150)]
         public string ImageLink { get; set; }
+        public Guid ImageId { get; set; }
 
         [Required]
+        public string CreatorId { get; set; }
         public virtual ApplicationUser Creator { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();

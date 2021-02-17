@@ -9,11 +9,12 @@
     {
         [Required, MaxLength(450)]
         public string Content { get; set; }
-        
-        [Required]
+
+        public Guid ConversationId { get; set; }
         public virtual Conversation Conversation { get; set; }
 
         [Required]
+        public string SenderId { get; set; }
         public virtual ApplicationUser Sender { get; set; }
     }
 }

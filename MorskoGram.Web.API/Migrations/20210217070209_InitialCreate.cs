@@ -240,6 +240,7 @@ namespace MorskoGram.Web.API.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 450, nullable: true),
                     ImageLink = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    ImageId = table.Column<Guid>(type: "TEXT", nullable: false),
                     CreatorId = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: true)

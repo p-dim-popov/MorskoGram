@@ -8,9 +8,10 @@
     public class Like: BaseModel<Guid>, IAuditInfo
     {
         [Required]
+        public string GiverId { get; set; }
         public virtual ApplicationUser Giver { get; set; }
 
-        [Required]
+        public Guid PostId { get; set; }
         public virtual Post Post { get; set; }
     }
 }

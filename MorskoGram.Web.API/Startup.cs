@@ -14,12 +14,16 @@ using Microsoft.Extensions.Hosting;
 namespace MorskoGram.Web.API
 {
     using System.Reflection;
+    using Dropbox.Api;
     using MorskoGram.Data.Common.Repositories;
     using MorskoGram.Data.Models;
+    using MorskoGram.Services;
+    using MorskoGram.Services.Implementations;
     using MorskoGram.Services.Mapping;
     using MorskoGram.Web.API.Data.Repositories;
     using MorskoGram.Web.API.Data.Seeding;
     using MorskoGram.Web.ViewModels;
+    using MorskoGram.Web.ViewModels.Posts;
 
     public class Startup
     {
@@ -48,21 +52,38 @@ namespace MorskoGram.Web.API
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
             services.AddRazorPages();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
-            
+
             services.AddSingleton(this.Configuration);
-            
+
+            // Data Repositories
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+
+            services.AddScoped(_ =>
+            {
+                var dropboxSection = this.Configuration.GetSection("Dropbox");
+                var accessToken = dropboxSection.GetSection("AccessToken").Value;
+                var appKey = dropboxSection.GetSection("AppKey").Value;
+                var appSecret = dropboxSection.GetSection("AppSecret").Value;
+                return new DropboxClient(accessToken);
+            });
+
+            // Data Services
+            services.AddTransient<IDropboxService, DropboxService>();
+            services.AddTransient<IPostsService, PostsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            AutoMapperConfig.RegisterMappings(typeof(WeatherForecast).GetTypeInfo().Assembly);
+            AutoMapperConfig.RegisterMappings(
+                typeof(ListPostsViewModel).GetTypeInfo().Assembly // Get the view models assembly
+            );
 
             // Seed data on application startup
             using (var serviceScope = app.ApplicationServices.CreateScope())

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Dropbox.Api" Version="6.0.1" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MorskoGram.Data.Models\MorskoGram.Data.Models.csproj" />
+      <ProjectReference Include="..\MorskoGram.Services.Mapping\MorskoGram.Services.Mapping.csproj" />
+    </ItemGroup>
+
+</Project>

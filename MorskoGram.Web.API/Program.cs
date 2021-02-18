@@ -23,10 +23,11 @@ namespace MorskoGram.Web.API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    if (Port is not null)
-                    {
+                    Console.WriteLine($"Port: {Port}");
+                    // if (Port is not null)
+                    // {
                         webBuilder.UseUrls($"http://+:{Port}");
-                    }
+                    // }
                 });
     }
 }

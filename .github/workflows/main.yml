@@ -1,0 +1,21 @@
+name: Deploy
+
+on push:
+    branches:
+        - dev
+        
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: akhileshns/heroku-deploy@v3.11.10
+              with:
+                heroku_api_key: ${{secrets.HEROKU_1117419_API_KEY}}
+                heroku_app_name: "morskogram"
+                heroku_email: "1117419@nvna.eu"
+                justlogin: true
+            - run: |
+                docker build -t morskogram -f .\MorskoGram.Web.API\Dockerfile .
+                docker tag morskogram registry.heroku.com/morskogram/web
+                heroku container:release web -a morskogram

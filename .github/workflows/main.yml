@@ -4,8 +4,6 @@ on:
     push:
         branches:
             - dev
-            - main
-            - MG-6/Create-Dockerfile-for-Heroku-and-Github-integration
         
 jobs:
     build_and_deploy:

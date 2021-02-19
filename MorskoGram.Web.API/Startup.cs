@@ -120,10 +120,10 @@ namespace MorskoGram.Web.API
                 app.UseHsts();
             }
 
-            if (Environment.GetEnvironmentVariable("USE_HTTPS_REDIRECTION") is not null)
-            {
+            // if (Environment.GetEnvironmentVariable("USE_HTTPS_REDIRECTION") is not null)
+            // {
                 app.UseHttpsRedirection();
-            }
+            // }
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 

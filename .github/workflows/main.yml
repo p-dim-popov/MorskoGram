@@ -4,7 +4,6 @@ on:
     push:
         branches:
             - dev
-            - MG-9/Fix-SSL
         
 jobs:
     build_and_deploy:

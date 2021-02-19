@@ -24,10 +24,10 @@ namespace MorskoGram.Web.API
                 {
                     webBuilder.UseStartup<Startup>();
                     Console.WriteLine($"Port: {Port}");
-                    // if (Port is not null)
-                    // {
+                    if (Port is not null)
+                    {
                         webBuilder.UseUrls($"http://+:{Port}");
-                    // }
+                    }
                 });
     }
 }

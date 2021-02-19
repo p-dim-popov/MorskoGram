@@ -17,4 +17,5 @@ jobs:
                 heroku container:login
                 docker build -t morskogram -f ./MorskoGram.Web.API/Dockerfile .
                 docker tag morskogram registry.heroku.com/morskogram/web
+                docker push registry.heroku.com/morskogram/web
                 heroku container:release web -a morskogram

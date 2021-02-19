@@ -3,6 +3,8 @@ name: Deploy
 on:
     push:
         branches:
+            - dev
+            - main
             - MG-6/Create-Dockerfile-for-Heroku-and-Github-integration
         
 jobs:

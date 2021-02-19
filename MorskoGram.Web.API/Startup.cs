@@ -17,6 +17,8 @@ namespace MorskoGram.Web.API
     using System.Reflection;
     using System.Text.RegularExpressions;
     using Dropbox.Api;
+    using Microsoft.AspNetCore.HttpOverrides;
+    using Microsoft.AspNetCore.Rewrite;
     using MorskoGram.Data.Common.Repositories;
     using MorskoGram.Data.Models;
     using MorskoGram.Services;
@@ -108,6 +110,13 @@ namespace MorskoGram.Web.API
                     .GetResult();
             }
 
+            var forwardedHeadersOptions = new ForwardedHeadersOptions {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            };
+            forwardedHeadersOptions.KnownNetworks.Clear();
+            forwardedHeadersOptions.KnownProxies.Clear();
+            app.UseForwardedHeaders(forwardedHeadersOptions);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -120,10 +129,9 @@ namespace MorskoGram.Web.API
                 app.UseHsts();
             }
 
-            // if (Environment.GetEnvironmentVariable("USE_HTTPS_REDIRECTION") is not null)
-            // {
-                app.UseHttpsRedirection();
-            // }
+            var rewriteOptions = new RewriteOptions ().AddRedirectToHttps(308);
+            app.UseRewriter(rewriteOptions);
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 

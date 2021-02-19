@@ -8,10 +8,11 @@ on:
 jobs:
     build_and_deploy:
         runs-on: ubuntu-latest
+        env:
+            HEROKU_API_KEY=${{secrets.HEROKU_1117419_API_KEY}}
         steps:
             - uses: actions/checkout@v2
             - run: |
-                $HEROKU_API_KEY=${{secrets.HEROKU_1117419_API_KEY}}
                 heroku auth:login
                 heroku container:login
                 docker build -t morskogram -f ./MorskoGram.Web.API/Dockerfile .

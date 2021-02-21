@@ -239,7 +239,7 @@ namespace MorskoGram.Web.API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Description = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: true),
+                    Caption = table.Column<string>(type: "character varying(450)", maxLength: 450, nullable: true),
                     ImageLink = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     ImageId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatorId = table.Column<string>(type: "text", nullable: false),

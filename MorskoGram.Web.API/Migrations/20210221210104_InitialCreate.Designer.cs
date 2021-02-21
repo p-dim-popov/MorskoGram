@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MorskoGram.Web.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210217173118_InitialCreate")]
+    [Migration("20210221210104_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -490,16 +490,16 @@ namespace MorskoGram.Web.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Caption")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("CreatorId")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(450)
-                        .HasColumnType("character varying(450)");
 
                     b.Property<Guid>("ImageId")
                         .HasColumnType("uuid");

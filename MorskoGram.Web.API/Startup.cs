@@ -15,6 +15,7 @@ namespace MorskoGram.Web.API
 {
     using System;
     using System.Reflection;
+    using System.Text.Json;
     using System.Text.RegularExpressions;
     using Dropbox.Api;
     using Microsoft.AspNetCore.HttpOverrides;
@@ -79,6 +80,10 @@ namespace MorskoGram.Web.API
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
 
             services.AddSingleton(this.Configuration);
+            services.AddSingleton(new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            });
 
             // Data Repositories
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
@@ -90,6 +95,7 @@ namespace MorskoGram.Web.API
             // Data Services
             services.AddTransient<IDropboxService, DropboxService>();
             services.AddTransient<IPostsService, PostsService>();
+            services.AddTransient<IUsersService, UsersService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -54,10 +54,14 @@
                 {
                     x.EmailConfirmed = true;
                     return x;
-                })
-                .Select(user => SeedUserAsync(userManager, user, password));
+                });
 
-            await Task.WhenAll(users);
+            foreach (var user in users)
+            {
+                // Should not be parallel because throws exception
+                // System.InvalidOperationException: A second operation was started on this context before a previous operation completed. This is usually caused by different threads concurrently using the same instance of DbContext. For more information on how to avoid threading issues with DbContext, see https://go.microsoft.com/fwlink/?linkid=2097913.
+                await SeedUserAsync(userManager, user, password);
+            }
         }
 
         private static async Task SeedUserAsync(

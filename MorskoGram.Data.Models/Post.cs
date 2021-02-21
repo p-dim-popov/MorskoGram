@@ -9,7 +9,7 @@
     public class Post: BaseModel<Guid>, IAuditInfo
     {
         [MaxLength(450)]
-        public string Description { get; set; }
+        public string Caption { get; set; }
 
         [Required, MaxLength(150)]
         public string ImageLink { get; set; }

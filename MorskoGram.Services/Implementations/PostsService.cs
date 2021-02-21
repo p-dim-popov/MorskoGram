@@ -31,7 +31,7 @@
             where T : IMapFrom<Post>
             => await this.postsRepository
                 .AllAsNoTracking()
-                .Where(x => x.CreatorId == userId && x.CreatedOn <= (referenceDate ?? DateTime.UtcNow))
+                .Where(x => x.CreatorId == userId && x.CreatedOn < (referenceDate ?? DateTime.UtcNow))
                 .OrderByDescending(x => x.CreatedOn)
                 .To<T>()
                 .Take(count)
@@ -47,7 +47,7 @@
                 .Concat(this.postsRepository.AllAsNoTracking()
                     .Where(x => x.CreatorId == userId))
                 .OrderByDescending(x => x.CreatedOn)
-                .Where(x => x.CreatedOn <= (referenceDate ?? DateTime.UtcNow))
+                .Where(x => x.CreatedOn < (referenceDate ?? DateTime.UtcNow))
                 .Take(count)
                 .To<T>()
                 .ToListAsync();

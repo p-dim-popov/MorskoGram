@@ -7,7 +7,7 @@
 
     public class ListPostsViewModel: BaseModel<Guid>, IMapFrom<Post>
     {
-        public string Description { get; set; }
+        public string Caption { get; set; }
 
         public string ImageLink { get; set; }
 

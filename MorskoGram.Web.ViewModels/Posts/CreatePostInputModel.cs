@@ -6,7 +6,7 @@
     public class CreatePostInputModel
     {
         [MaxLength(450)]
-        public string Description { get; set; }
+        public string Caption { get; set; }
 
         [Required]
         public IFormFile Image { get; set; }

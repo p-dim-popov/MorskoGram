@@ -9,7 +9,7 @@
         <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
         <UserSecretsId>a009971c-4dcc-49e3-b602-b3bccc010bc8</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <Version>0.4.2+build$([System.DateTime]::UtcNow.ToString("yyyyMMddmmss"))</Version>
+        <Version>0.4.3+build$([System.DateTime]::UtcNow.ToString("yyyyMMddmmss"))</Version>
 <!--        <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>-->
     </PropertyGroup>
 

@@ -30,7 +30,17 @@ const generateOptions = (token, data = null, overrides = null) => {
     return options;
 };
 
-const fromRequest = (request) => (Type) =>
+/**
+ * @param {function({endpoint: string, data: Object, overrides: Object, token: string}): Promise<Response>} request
+ * @returns {function(Function): function(string, Object=, Object=): Promise<*>}
+ */
+const fromRequest = (request) =>
+    /**
+     * @param {Function} Type Constructor function (class)
+     * @returns {function(string, Object=, Object=): Promise<*>}
+     */
+    // eslint-disable-next-line implicit-arrow-linebreak
+    (Type) =>
     /**
      * @param {string} endpoint
      * @param {object} data
@@ -38,35 +48,37 @@ const fromRequest = (request) => (Type) =>
      * @returns {Promise<*>}
      */
     // eslint-disable-next-line implicit-arrow-linebreak
-    async (endpoint, data = null, overrides = null) => {
-        const token = await authService.getAccessToken();
-        const response = await request({
-            endpoint,
-            data,
-            overrides,
-            token,
-        });
+        async (endpoint, data = null, overrides = null) => {
+            const token = await authService.getAccessToken();
+            const originalResponse = await request({
+                endpoint,
+                data,
+                overrides,
+                token,
+            });
 
-        if (response.status < 200 || response.status > 300) {
-            throw response;
-        }
+            try {
+                const response = originalResponse.clone();
 
-        // TODO: Check if Type extends Mergeable
-        if (!Type) {
-            return response?.json();
-        }
+                // TODO: Check if Type extends Mergeable
+                if (!Type) {
+                    return response?.json();
+                }
 
-        const result = await response?.json();
-        if (!(Type instanceof Array)) {
-            return new Type(result);
-        }
+                const result = await response?.json();
+                if (!(Type instanceof Array)) {
+                    return new Type(result);
+                }
 
-        if (result instanceof Array) {
-            return result.map((x) => new Type[0](x));
-        }
+                if (result instanceof Array) {
+                    return result.map((x) => new Type[0](x));
+                }
 
-        return result;
-    };
+                return result;
+            } catch (err) {
+                return originalResponse;
+            }
+        };
 
 export const getAsync = fromRequest(
     (_) => fetch(_.endpoint, generateOptions(_.token, _.data, {

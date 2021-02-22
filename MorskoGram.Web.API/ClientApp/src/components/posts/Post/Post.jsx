@@ -1,27 +1,59 @@
-﻿import React from 'react';
+﻿import React, {useState, useEffect} from 'react';
 import {
-    Button, Card, CardBody, CardImg, CardText,
+    Button, Card, CardBody, CardImg, CardText, Row, Col,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import {useHistory} from 'react-router';
-import {LikedHeart, NotLikedHeart} from '../../icons';
+import {
+    LikedHeart, NotLikedHeart, TrashIcon, EditIcon,
+} from '../../icons';
 import {PostViewModel, ListPostsViewModel} from '../../../models/posts';
 import {utcToLocal} from '../../../utils/dateTimeHelper';
+import {POSTS} from '../../../constants/endpoints';
+import {deleteAsync} from '../../../utils/fetcher';
+import {restManager} from '../../../utils/restManager';
 
 export const Post = React.memo(function Post({
     dataSource,
     likeHandler,
 }) {
     const history = useHistory();
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const _likeHandler = likeHandler ?? (() => {
         console.log(dataSource.id);
     });
 
+    useEffect(() => {
+        if (isDeleting) {
+            deleteAsync()(`${POSTS}/${dataSource.id}`)
+                .then(() => history.push(`/profile/${dataSource.creatorEmail}`))
+                .catch(restManager)
+                .then(() => setIsDeleting(false));
+        }
+    }, [isDeleting]);
+
     return (
         <Card>
             <CardBody>
+                <Row>
+                    <Col>
+                        <Button color="primary">
+                            <EditIcon/>
+                        </Button>
+                    </Col>
+                    <Col/>
+                    <Col xs="auto">
+                        <Button
+                            onClick={() => setIsDeleting(true)}
+                            color="danger"
+                            disabled={isDeleting}
+                        >
+                            <TrashIcon/>
+                        </Button>
+                    </Col>
+                </Row>
                 <CardImg onDoubleClick={_likeHandler} src={dataSource.imageLink}/>
                 <CardText>
                     <b>

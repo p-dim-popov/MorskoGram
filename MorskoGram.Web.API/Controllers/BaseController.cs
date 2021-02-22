@@ -42,5 +42,7 @@
             await this.HttpContext.SignOutAsync();
             return base.Unauthorized();
         }
+
+        protected new OkObjectResult Ok(object value = null) => base.Ok(value ?? new object());
     }
 }

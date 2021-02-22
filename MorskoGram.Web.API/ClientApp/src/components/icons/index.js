@@ -8,4 +8,5 @@
     FaHeart as LikedHeart,
     FaRegHeart as NotLikedHeart,
     FiInstagram as Logo,
+    GrEdit as EditIcon,
 } from 'react-icons/all';

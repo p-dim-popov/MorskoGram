@@ -11,7 +11,7 @@ export const restManager = (response) => {
     case /^404$/.test(x):
         // TODO: Message below navmenu
         break;
-    case /^400$/.test(x):
+    case /^401$/.test(x):
         authService.signIn();
         break;
     default:

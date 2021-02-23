@@ -7,6 +7,8 @@ import {Camera} from '../../../Camera';
 import {postAsync} from '../../../../utils/fetcher';
 import {POSTS} from '../../../../constants/endpoints';
 import {CameraIcon, TrashIcon} from '../../../icons';
+import {UploadButton} from '../../../UploadButton';
+import {toBase64} from '../../../../utils/files';
 
 export const CreatePostPage = React.memo(function CreatePostPage() {
     const history = useHistory();
@@ -97,7 +99,7 @@ export const CreatePostPage = React.memo(function CreatePostPage() {
                                 {' '}
                                 or
                                 {' '}
-                                <Button>Upload</Button>
+                                <UploadButton onUpload={async (file) => setPhoto(await toBase64(file))}/>
                                 {' '}
                                 a photo
                             </h5>

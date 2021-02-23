@@ -1,8 +1,4 @@
-﻿.kiosk {
-    display: flex;
-}
-
-.kiosk > * {
+﻿.kiosk > * {
     position: fixed;
     width: 100vw;
     height: 100vh;
@@ -16,9 +12,8 @@
 
 .container {
     display: flex;
-    align-self: center;
     flex-direction: column;
-    align-content: center;
+    justify-content: center;
 }
 
 .bottomButtons {
@@ -28,7 +23,4 @@
 
 .bottomButtons > * {
     width: 50%;
-}
-
-.img {
 }

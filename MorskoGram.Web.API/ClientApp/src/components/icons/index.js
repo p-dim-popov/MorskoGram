@@ -4,7 +4,7 @@
     FaTrash as TrashIcon,
     FaCamera as CameraIcon,
     FaCheck as ApproveIcon,
-    FaUndoAlt as BackIcon,
+    FaUndoAlt as AgainIcon,
     FaHeart as LikedHeart,
     FaRegHeart as NotLikedHeart,
     FiInstagram as Logo,

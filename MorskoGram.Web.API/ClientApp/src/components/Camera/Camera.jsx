@@ -1,10 +1,8 @@
-﻿import React, {useRef, useState, useCallback} from 'react';
+﻿import React, {useRef, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import Webcam from 'react-webcam';
-import {
-    Button, CardImg,
-} from 'reactstrap';
-import {CameraIcon, ApproveIcon, BackIcon} from '../icons';
+import {Button} from 'reactstrap';
+import {CameraIcon, ApproveIcon, AgainIcon} from '../icons';
 import style from './style.module.css';
 
 export const Camera = React.memo(({
@@ -14,30 +12,36 @@ export const Camera = React.memo(({
     const cameraRef = useRef(null);
     const [photo, setPhoto] = useState(null);
 
-    const onClickTake = useCallback(
-        () => setPhoto(cameraRef.current?.getScreenshot()), [cameraRef, setPhoto],
-    );
+    const onClickTake = () => {
+        setPhoto(cameraRef.current?.getScreenshot());
+    };
+
+    useEffect(() => {
+        if (cameraRef.current?.video) {
+            if (photo) {
+                cameraRef.current.video.pause();
+            } else {
+                cameraRef.current.video.play();
+            }
+        }
+    }, [photo, cameraRef]);
 
     return (
         <div className={style.kiosk}>
             <div className={style.container}>
                 <Button color="secondary" onClick={onBack}>Back</Button>
-                {photo
-                    ? <CardImg className={style.img} src={photo} alt="Taken photo"/>
-                    : (
-                        <Webcam
-                            ref={cameraRef}
-                            audio={false}
-                            mirrored
-                            screenshotQuality={1}
-                            screenshotFormat="image/jpeg"
-                        />
-                    )}
+                <Webcam
+                    ref={cameraRef}
+                    audio={false}
+                    mirrored
+                    screenshotQuality={1}
+                    screenshotFormat="image/jpeg"
+                />
                 {photo
                     ? (
                         <div className={style.bottomButtons}>
                             <Button color="danger" onClick={() => setPhoto(null)}>
-                                <BackIcon/>
+                                <AgainIcon/>
                             </Button>
                             <Button color="primary" onClick={() => onApprove(photo)}>
                                 <ApproveIcon/>

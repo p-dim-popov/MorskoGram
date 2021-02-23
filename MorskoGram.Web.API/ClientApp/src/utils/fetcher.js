@@ -1,5 +1,5 @@
-﻿import authService from '../components/api-authorization/AuthorizeService';
-import {restManager} from './restManager';
+﻿import mimeType from 'mime-types';
+import authService from '../components/api-authorization/AuthorizeService';
 
 const generateOptions = (token, data = null, overrides = null) => {
     const options = {
@@ -18,6 +18,9 @@ const generateOptions = (token, data = null, overrides = null) => {
         Object.assign(options, {
             headers: {
                 ...options.headers,
+                ...(data instanceof FormData
+                    ? {}
+                    : {'Content-Type': mimeType.contentType('json')}),
             },
             body: (data instanceof FormData) ? data : JSON.stringify(data),
         });
@@ -36,11 +39,11 @@ const generateOptions = (token, data = null, overrides = null) => {
  */
 const fromRequest = (request) =>
     /**
-     * @param {Function} Type Constructor function (class)
+     * @param {Function|Function[]} Type Constructor function (class)
      * @returns {function(string, Object=, Object=): Promise<*>}
      */
     // eslint-disable-next-line implicit-arrow-linebreak
-    (Type) =>
+    (Type = null) =>
     /**
      * @param {string} endpoint
      * @param {object} data
@@ -57,8 +60,12 @@ const fromRequest = (request) =>
                 token,
             });
 
+            if (!/^2\d\d$/.test(originalResponse.status?.toString())) {
+                throw originalResponse;
+            }
+
             try {
-                const response = originalResponse.clone();
+                const response = await originalResponse.clone();
 
                 // TODO: Check if Type extends Mergeable
                 if (!Type) {
@@ -76,12 +83,12 @@ const fromRequest = (request) =>
 
                 return result;
             } catch (err) {
-                return originalResponse;
+                throw originalResponse;
             }
         };
 
 export const getAsync = fromRequest(
-    (_) => fetch(_.endpoint, generateOptions(_.token, _.data, {
+    (_) => fetch(_.endpoint, generateOptions(_.token, null, {
         method: 'GET',
         ..._.overrides,
     })),
@@ -102,8 +109,9 @@ export const deleteAsync = fromRequest(
     })),
 );
 
-export default {
-    getAsync,
-    postAsync,
-    deleteAsync,
-};
+export const patchAsync = fromRequest(
+    (_) => fetch(_.endpoint, generateOptions(_.token, _.data, {
+        method: 'PATCH',
+        ..._.overrides,
+    })),
+);

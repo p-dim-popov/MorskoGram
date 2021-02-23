@@ -57,7 +57,8 @@
 
             // When db is cleared old accounts are still logged in
             // and cookies need to be cleared in order to work
-            return await this.UnauthorizedWithSignOutAsync();
+            // return await this.UnauthorizedWithSignOutAsync();
+            return this.Unauthorized();
         }
 
         [Authorize]
@@ -102,7 +103,7 @@
 
         [Authorize]
         [HttpPatch("{id:required}")]
-        public async Task<IActionResult> Update([FromRoute] Guid? id, [FromForm] EditPostInputModel model)
+        public async Task<IActionResult> Update([FromRoute] Guid? id, [FromBody] EditPostInputModel model)
         {
             if (id is null)
             {
@@ -121,12 +122,10 @@
 
             var dto = new EditPostDto
             {
-                Id = id.Value,
                 Caption = model.Caption,
-                ModifiedOn = DateTime.UtcNow,
             };
-            var post = await this.postsService.EditAsync<EditPostDto, PostViewModel>(dto);
-            return this.Accepted($"/api/[controller]/{post.Id}", post);
+            var post = await this.postsService.EditAsync<EditPostDto, PostViewModel>(id.Value, dto);
+            return this.Accepted(post);
         }
 
         [Authorize]

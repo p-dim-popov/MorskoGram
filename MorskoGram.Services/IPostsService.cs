@@ -25,8 +25,8 @@
 
         Task<bool> IsUserPostOwnerAsync(string userId, Guid postId);
 
-        Task<TOut> EditAsync<TIn, TOut>(TIn dto)
-            where TIn : BaseModel<Guid>, IMapTo<Post>
+        Task<TOut> EditAsync<TIn, TOut>(Guid id, TIn dto)
+            where TIn : IMapTo<Post>
             where TOut : IMapFrom<Post>;
     }
 }

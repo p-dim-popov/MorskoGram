@@ -1,4 +1,4 @@
-﻿import React, {useState, useEffect, useCallback} from 'react';
+﻿import React, {useState, useEffect} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {getAsync} from '../../../../utils/fetcher';
 import {POSTS} from '../../../../constants/endpoints';
@@ -22,9 +22,7 @@ export const FeedPage = React.memo(function FeedPage() {
                 setHasMorePosts(!!data.length);
                 const newPosts = [...posts, ...data];
                 setPosts(newPosts);
-                return newPosts;
             }
-            return posts;
         })
         .catch(restManager);
 
@@ -39,7 +37,9 @@ export const FeedPage = React.memo(function FeedPage() {
             hasMore={hasMorePosts}
             loader={<h4>Loading...</h4>}
         >
-            {posts.map((x) => (<Post key={x.id} dataSource={x}/>))}
+            {posts.map((post) => (
+                <Post key={post.id} dataSource={post}/>
+            ))}
         </InfiniteScroll>
     );
 });

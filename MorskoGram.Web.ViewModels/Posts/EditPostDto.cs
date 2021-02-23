@@ -5,8 +5,8 @@
     using MorskoGram.Data.Models;
     using MorskoGram.Services.Mapping;
 
-    public class EditPostDto: BaseModel<Guid>, IMapTo<Post>
+    public class EditPostDto: IMapTo<Post>
     {
-        public string Description { get; set; }
+        public string Caption { get; set; }
     }
 }

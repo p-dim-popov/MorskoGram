@@ -1,0 +1,34 @@
+﻿.kiosk {
+    display: flex;
+}
+
+.kiosk > * {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("../../assets/img/general-sea-background.jpg");
+    z-index: 2;
+}
+
+.container {
+    display: flex;
+    align-self: center;
+    flex-direction: column;
+    align-content: center;
+}
+
+.bottomButtons {
+    display: flex;
+    flex-direction: row;
+}
+
+.bottomButtons > * {
+    width: 50%;
+}
+
+.img {
+}

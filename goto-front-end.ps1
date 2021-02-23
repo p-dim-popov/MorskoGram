@@ -1,0 +1,1 @@
+cd MorskoGram.Web.API/ClientApp

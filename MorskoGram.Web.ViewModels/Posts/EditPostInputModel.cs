@@ -5,6 +5,6 @@
     public class EditPostInputModel
     {
         [MaxLength(450)]
-        public string Description { get; set; }
+        public string Caption { get; set; }
     }
 }

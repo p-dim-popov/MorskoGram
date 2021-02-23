@@ -31,7 +31,7 @@
             where T : IMapFrom<Post>
             => await this.postsRepository
                 .AllAsNoTracking()
-                .Where(x => x.CreatorId == userId && x.CreatedOn <= (referenceDate ?? DateTime.UtcNow))
+                .Where(x => x.CreatorId == userId && x.CreatedOn < (referenceDate ?? DateTime.UtcNow))
                 .OrderByDescending(x => x.CreatedOn)
                 .To<T>()
                 .Take(count)
@@ -47,7 +47,7 @@
                 .Concat(this.postsRepository.AllAsNoTracking()
                     .Where(x => x.CreatorId == userId))
                 .OrderByDescending(x => x.CreatedOn)
-                .Where(x => x.CreatedOn <= (referenceDate ?? DateTime.UtcNow))
+                .Where(x => x.CreatedOn < (referenceDate ?? DateTime.UtcNow))
                 .Take(count)
                 .To<T>()
                 .ToListAsync();
@@ -89,15 +89,19 @@
                 .AllAsNoTracking()
                 .AnyAsync(x => x.Id == postId && x.CreatorId == userId);
 
-        public async Task<TOut> EditAsync<TIn, TOut>(TIn model)
-            where TIn : BaseModel<Guid>, IMapTo<Post>
+        public async Task<TOut> EditAsync<TIn, TOut>(Guid id, TIn model)
+            where TIn : IMapTo<Post>
             where TOut : IMapFrom<Post>
         {
             var oldPost = await this.postsRepository.All()
-                .FirstOrDefaultAsync(x => x.Id == model.Id);
+                .FirstOrDefaultAsync(x => x.Id == id);
             var newPost = AutoMapperConfig.MapperInstance.Map(model, oldPost);
             await this.postsRepository.SaveChangesAsync();
-            return AutoMapperConfig.MapperInstance.Map<Post, TOut>(newPost);
+            return await this.postsRepository
+                .AllAsNoTracking()
+                .Where(x => x.Id == id)
+                .To<TOut>()
+                .FirstOrDefaultAsync();
         }
     }
 }

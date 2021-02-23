@@ -6,12 +6,13 @@
     using System.Text;
     using System.Text.Json;
     using System.Threading.Tasks;
+    using IdentityServer4.Extensions;
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using MorskoGram.Services;
     using MorskoGram.Web.ViewModels.Posts;
 
-    [Authorize]
     [ApiController]
     [Route("/api/[controller]")]
     [Produces(MediaTypeNames.Application.Json)]
@@ -21,7 +22,12 @@
         private readonly IPostsService postsService;
         private readonly IDropboxService dropboxService;
 
-        public PostsController(IPostsService postsService, IDropboxService dropboxService)
+        public PostsController(
+            IPostsService postsService,
+            IDropboxService dropboxService,
+            IUsersService usersService,
+            JsonSerializerOptions jsonSerializerOptions)
+            : base(jsonSerializerOptions, usersService)
         {
             this.postsService = postsService;
             this.dropboxService = dropboxService;
@@ -29,15 +35,33 @@
 
         [HttpGet("")]
         [HttpGet("user/{userId}")]
-        public async Task<IEnumerable<ListPostsViewModel>> Get(
-            [FromHeader] DateTime? referenceDate = null,
+        public async Task<IActionResult> Get(
+            [FromQuery] DateTime? referenceDate = null,
             [FromRoute] string userId = null,
             [FromQuery] int count = PostsShowCount
         )
-            => userId is not null
-                ? await this.postsService.GetFewForUserAsync<ListPostsViewModel>(userId, referenceDate, count)
-                : await this.postsService.GetFewForFeed<ListPostsViewModel>(this.UserId, referenceDate, count);
+        {
+            if (userId is not null)
+            {
+                return this.Json(await this.postsService.GetFewForUserAsync<ListPostsViewModel>(
+                    userId, referenceDate, count
+                ));
+            }
 
+            if (await this.IsUserAuthenticated())
+            {
+                return this.Json(await this.postsService.GetFewForFeed<ListPostsViewModel>(
+                    this.UserId, referenceDate, count
+                ));
+            }
+
+            // When db is cleared old accounts are still logged in
+            // and cookies need to be cleared in order to work
+            // return await this.UnauthorizedWithSignOutAsync();
+            return this.Unauthorized();
+        }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CreatePostInputModel model)
         {
@@ -51,12 +75,12 @@
             var dto = new CreatePostDto
             {
                 CreatorId = this.UserId,
-                Description = model.Description,
+                Caption = model.Caption,
                 ImageId = imageId,
                 ImageLink = imageLink,
             };
             var post = await this.postsService.CreateAsync<CreatePostDto, PostViewModel>(dto);
-            return this.Created($"/api/[controller]/{post.Id}", post);
+            return this.Created(post.Id.ToString(), post);
         }
 
         [HttpGet("{id:required}")]
@@ -74,14 +98,12 @@
                 return this.NotFound();
             }
 
-            return this.Content(JsonSerializer.Serialize(post, new JsonSerializerOptions // TODO: add as a singleton
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            }), MediaTypeNames.Application.Json, Encoding.UTF8);
+            return this.Json(post);
         }
 
+        [Authorize]
         [HttpPatch("{id:required}")]
-        public async Task<IActionResult> Update([FromRoute] Guid? id, [FromForm] EditPostInputModel model)
+        public async Task<IActionResult> Update([FromRoute] Guid? id, [FromBody] EditPostInputModel model)
         {
             if (id is null)
             {
@@ -100,14 +122,13 @@
 
             var dto = new EditPostDto
             {
-                Id = id.Value,
-                Description = model.Description,
-                ModifiedOn = DateTime.UtcNow,
+                Caption = model.Caption,
             };
-            var post = await this.postsService.EditAsync<EditPostDto, PostViewModel>(dto);
-            return this.Accepted($"/api/[controller]/{post.Id}", post);
+            var post = await this.postsService.EditAsync<EditPostDto, PostViewModel>(id.Value, dto);
+            return this.Accepted(post);
         }
 
+        [Authorize]
         [HttpDelete("{id:required}")]
         public async Task<IActionResult> Delete(Guid? id)
         {

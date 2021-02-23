@@ -38,7 +38,7 @@ export default class FetchData extends Component {
 
   async populateWeatherData() {
     this.setState({
-      forecasts: await getAsync('/weatherforecast'),
+      forecasts: await getAsync()('/weatherforecast'),
       loading: false,
     });
   }

@@ -11,6 +11,8 @@ namespace MorskoGram.Web.API
 {
     public class Program
     {
+        
+        public static string Port => Environment.GetEnvironmentVariable("PORT");
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
@@ -18,6 +20,14 @@ namespace MorskoGram.Web.API
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                    Console.WriteLine($"Port: {Port}");
+                    if (Port is not null)
+                    {
+                        webBuilder.UseUrls($"http://+:{Port}");
+                    }
+                });
     }
 }

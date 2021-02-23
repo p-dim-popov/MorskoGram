@@ -10,6 +10,17 @@
         "ecmaVersion": 2018
     },
     "rules": {
-        "linebreak-style": 0
+        "linebreak-style": 0,
+        "indent": ["error", 4],
+        "react/jsx-indent": ["error", 4],
+        "react/jsx-indent-props": ["error", 4],
+        "react/jsx-tag-spacing": 0,
+        "max-len": ["error", 120],
+        "object-curly-spacing": "off",
+        "import/prefer-default-export": "off",
+        "react/prop-types": "warn",
+        "react/jsx-props-no-spreading": "off",
+        "prefer-arrow-callback": "off",
+        "no-underscore-dangle": "off"
     }
 }

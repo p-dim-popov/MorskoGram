@@ -13,8 +13,13 @@ using Microsoft.Extensions.Hosting;
 
 namespace MorskoGram.Web.API
 {
+    using System;
     using System.Reflection;
+    using System.Text.Json;
+    using System.Text.RegularExpressions;
     using Dropbox.Api;
+    using Microsoft.AspNetCore.HttpOverrides;
+    using Microsoft.AspNetCore.Rewrite;
     using MorskoGram.Data.Common.Repositories;
     using MorskoGram.Data.Models;
     using MorskoGram.Services;
@@ -38,9 +43,23 @@ namespace MorskoGram.Web.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(this.Configuration.GetConnectionString("Postgres")));
-                // options.UseSqlite(
-                //     Configuration.GetConnectionString("DefaultConnection")));
+            {
+                var uriRegex =
+                    new Regex(
+                        @"^(?:(?<protocol>[^:\/?#\s]+):\/{2})?(?<username>([^@\/?#\s]+))?:(?<password>([^@\/?#\s]+))?@(?<host>[^\/?#\s]+)?:(?<port>\d{1,5})?\/(?<database>([^?#\s]*))?\S*$");
+                var uri = Environment.GetEnvironmentVariable("DATABASE_URL") is not null
+                    ? Environment.GetEnvironmentVariable("DATABASE_URL")
+                    : this.Configuration.GetConnectionString("Postgres");
+                var match = uriRegex.Match(uri);
+                var connectionString = $"server={match.Groups["host"]};" +
+                                       $"username={match.Groups["username"]};" +
+                                       $"password={match.Groups["password"]};" +
+                                       $"port={match.Groups["port"]};" +
+                                       $"database={match.Groups["database"]};" +
+                                       $"sslmode=Require;" +
+                                       $"Trust Server Certificate=true";
+                options.UseNpgsql(connectionString);
+            });
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -61,22 +80,22 @@ namespace MorskoGram.Web.API
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
 
             services.AddSingleton(this.Configuration);
+            services.AddSingleton(new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            });
 
             // Data Repositories
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 
-            services.AddScoped(_ =>
-            {
-                var dropboxSection = this.Configuration.GetSection("Dropbox");
-                var accessToken = dropboxSection.GetSection("AccessToken").Value;
-                var appKey = dropboxSection.GetSection("AppKey").Value;
-                var appSecret = dropboxSection.GetSection("AppSecret").Value;
-                return new DropboxClient(accessToken);
-            });
+            services.AddScoped(_ => new DropboxClient(Environment.GetEnvironmentVariable("DROPBOX_ACCESS_TOKEN") is not null
+                ? Environment.GetEnvironmentVariable("DROPBOX_ACCESS_TOKEN")
+                : this.Configuration.GetSection("DropboxAccessToken").Value));
 
             // Data Services
             services.AddTransient<IDropboxService, DropboxService>();
             services.AddTransient<IPostsService, PostsService>();
+            services.AddTransient<IUsersService, UsersService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -97,6 +116,13 @@ namespace MorskoGram.Web.API
                     .GetResult();
             }
 
+            var forwardedHeadersOptions = new ForwardedHeadersOptions {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            };
+            forwardedHeadersOptions.KnownNetworks.Clear();
+            forwardedHeadersOptions.KnownProxies.Clear();
+            app.UseForwardedHeaders(forwardedHeadersOptions);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -109,6 +135,8 @@ namespace MorskoGram.Web.API
                 app.UseHsts();
             }
 
+            var rewriteOptions = new RewriteOptions ().AddRedirectToHttps(308);
+            app.UseRewriter(rewriteOptions);
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();

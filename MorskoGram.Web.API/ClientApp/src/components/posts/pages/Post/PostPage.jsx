@@ -23,7 +23,7 @@ export const PostPage = React.memo(function PostPage() {
         : (
             <Row>
                 <Col xs={12} sm={12} md={12} lg={8} xl={8}>
-                    <Post dataSource={post}/>
+                    <Post dataSource={post} setDataSource={setPost}/>
                 </Col>
                 <Col xs={12} sm={12} md={12} lg={4} xl={4}>
                     {[

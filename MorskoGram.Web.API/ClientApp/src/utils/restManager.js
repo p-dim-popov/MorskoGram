@@ -4,7 +4,7 @@
  * @param {Response} response
  */
 export const restManager = (response) => {
-    const x = response.status.toString();
+    const x = response?.status?.toString() || '';
     switch (true) {
     case /^2\d\d$/.test(x):
         return response;
@@ -17,5 +17,5 @@ export const restManager = (response) => {
     default:
         return response;
     }
-    return undefined;
+    return response;
 };

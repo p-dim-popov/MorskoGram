@@ -35,7 +35,7 @@ const generateOptions = (token, data = null, overrides = null) => {
 
 /**
  * @param {function({endpoint: string, data: Object, overrides: Object, token: string}): Promise<Response>} request
- * @returns {function(Function): function(string, Object=, Object=): Promise<*>}
+ * @returns {function(Function|Function[]): function(string, Object=, Object=): Promise<*>}
  */
 const fromRequest = (request) =>
     /**

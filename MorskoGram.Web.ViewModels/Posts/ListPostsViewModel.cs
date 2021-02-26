@@ -13,6 +13,8 @@
 
         public string CreatorEmail { get; set; }
 
+        public string CreatorId { get; set; }
+
         public int CommentsCount { get; set; }
 
         public int LikesCount { get; set; }

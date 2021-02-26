@@ -8,7 +8,7 @@
     public interface IUsersService
     {
         Task<bool> IsExistent(string id);
-        Task<T> GetByEmail<T>(string email)
+        Task<T> GetByIdAsync<T>(Guid id)
             where T : IMapFrom<ApplicationUser>;
     }
 }

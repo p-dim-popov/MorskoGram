@@ -25,15 +25,15 @@
             this.followsService = followsService;
         }
 
-        [HttpGet("{email:required}")]
-        public async Task<IActionResult> Get(string email)
+        [HttpGet("{id:required}")]
+        public async Task<IActionResult> Get(Guid? id)
         {
-            if (email is null)
+            if (id is null)
             {
                 return this.BadRequest();
             }
 
-            return this.Json(await this.usersService.GetByEmail<UserViewModel>(email));
+            return this.Json(await this.usersService.GetByIdAsync<UserViewModel>(id.Value));
         }
 
         [Authorize]

@@ -22,11 +22,11 @@
                 .AllAsNoTracking()
                 .AnyAsync(x => x.Id == id);
 
-        public Task<T> GetByEmail<T>(string email)
+        public Task<T> GetByIdAsync<T>(Guid id)
             where T : IMapFrom<ApplicationUser>
             => this.usersRepository
                 .AllAsNoTracking()
-                .Where(x => x.NormalizedEmail == email.ToUpper())
+                .Where(x => x.Id == id.ToString())
                 .To<T>()
                 .FirstOrDefaultAsync();
     }

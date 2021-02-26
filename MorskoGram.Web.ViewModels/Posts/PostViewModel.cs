@@ -14,6 +14,8 @@
 
         public string CreatorEmail { get; set; }
 
+        public string CreatorId { get; set; }
+
         public ICollection<Comment> Comments { get; set; }
 
         public ICollection<Like> Likes { get; set; }

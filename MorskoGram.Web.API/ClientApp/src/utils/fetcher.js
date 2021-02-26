@@ -1,4 +1,5 @@
-﻿import mimeType from 'mime-types';
+﻿/* eslint-disable implicit-arrow-linebreak */
+import mimeType from 'mime-types';
 import authService from '../components/api-authorization/AuthorizeService';
 
 const generateOptions = (token, data = null, overrides = null) => {
@@ -42,15 +43,13 @@ const fromRequest = (request) =>
      * @param {Function|Function[]} Type Constructor function (class)
      * @returns {function(string, Object=, Object=): Promise<*>}
      */
-    // eslint-disable-next-line implicit-arrow-linebreak
     (Type = null) =>
-    /**
-     * @param {string} endpoint
-     * @param {object} data
-     * @param {object} overrides
-     * @returns {Promise<*>}
-     */
-    // eslint-disable-next-line implicit-arrow-linebreak
+        /**
+         * @param {string} endpoint
+         * @param {object} data
+         * @param {object} overrides
+         * @returns {Promise<*>}
+         */
         async (endpoint, data = null, overrides = null) => {
             const token = await authService.getAccessToken();
             const originalResponse = await request({
@@ -88,7 +87,10 @@ const fromRequest = (request) =>
         };
 
 export const getAsync = fromRequest(
-    (_) => fetch(_.endpoint, generateOptions(_.token, null, {
+    (_) => fetch(`${_.endpoint}?${Object.entries(_.data || {})
+        .filter(([, v]) => v)
+        .map((x) => x.join('='))
+        .join('&')}`, generateOptions(_.token, null, {
         method: 'GET',
         ..._.overrides,
     })),

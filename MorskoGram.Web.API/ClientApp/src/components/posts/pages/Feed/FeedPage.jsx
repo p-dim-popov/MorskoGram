@@ -1,5 +1,6 @@
 ﻿import React, {useState, useEffect} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import {Col, Container, Row} from 'reactstrap';
 import {getAsync} from '../../../../utils/fetcher';
 import {POSTS} from '../../../../constants/endpoints';
 import {Post} from '../../Post';
@@ -31,15 +32,21 @@ export const FeedPage = React.memo(function FeedPage() {
     }, []);
 
     return (
-        <InfiniteScroll
-            dataLength={posts.length}
-            next={fetchPosts}
-            hasMore={hasMorePosts}
-            loader={<h4>Loading...</h4>}
-        >
-            {posts.map((post) => (
-                <Post key={post.id} dataSource={post}/>
-            ))}
-        </InfiniteScroll>
+        <Container>
+            <Row>
+                <Col>
+                    <InfiniteScroll
+                        dataLength={posts.length}
+                        next={fetchPosts}
+                        hasMore={hasMorePosts}
+                        loader={<h4>Loading...</h4>}
+                    >
+                        {posts.map((post) => (
+                            <Post key={post.id} dataSource={post}/>
+                        ))}
+                    </InfiniteScroll>
+                </Col>
+            </Row>
+        </Container>
     );
 });

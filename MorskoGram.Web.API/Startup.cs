@@ -96,6 +96,7 @@ namespace MorskoGram.Web.API
             services.AddTransient<IDropboxService, DropboxService>();
             services.AddTransient<IPostsService, PostsService>();
             services.AddTransient<IUsersService, UsersService>();
+            services.AddTransient<IFollowsService, FollowsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

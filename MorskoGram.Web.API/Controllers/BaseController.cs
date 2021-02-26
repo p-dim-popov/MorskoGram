@@ -10,12 +10,12 @@
     using Microsoft.AspNetCore.Mvc;
     using MorskoGram.Services;
 
-    public class BaseController : ControllerBase
+    public abstract class BaseController : ControllerBase
     {
         private readonly JsonSerializerOptions jsonSerializerOptions;
-        private readonly IUsersService usersService;
+        protected readonly IUsersService usersService;
 
-        public BaseController(JsonSerializerOptions jsonSerializerOptions, IUsersService usersService)
+        protected BaseController(JsonSerializerOptions jsonSerializerOptions, IUsersService usersService)
         {
             this.jsonSerializerOptions = jsonSerializerOptions;
             this.usersService = usersService;
@@ -43,6 +43,11 @@
             return base.Unauthorized();
         }
 
+        /// <summary>
+        /// Creates an OkObjectResult object that produces an Status200OK response.
+        /// </summary>
+        /// <param name="value">Defaults to null</param>
+        /// <returns>OkObjectResult</returns>
         protected new OkObjectResult Ok(object value = null) => base.Ok(value ?? new object());
     }
 }

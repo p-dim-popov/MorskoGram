@@ -33,18 +33,17 @@
             this.dropboxService = dropboxService;
         }
 
-        [HttpGet("")]
-        [HttpGet("user/{userId}")]
+        [HttpGet("user")]
         public async Task<IActionResult> Get(
-            [FromQuery] DateTime? referenceDate = null,
-            [FromRoute] string userId = null,
-            [FromQuery] int count = PostsShowCount
+            DateTime? referenceDate = null,
+            Guid? id = null,
+            int count = PostsShowCount
         )
         {
-            if (userId is not null)
+            if (id is not null)
             {
                 return this.Json(await this.postsService.GetFewForUserAsync<ListPostsViewModel>(
-                    userId, referenceDate, count
+                    id.ToString(), referenceDate, count
                 ));
             }
 

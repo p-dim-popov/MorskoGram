@@ -16,8 +16,8 @@ export const FeedPage = React.memo(function FeedPage({
     const [hasMorePosts, setHasMorePosts] = useState(true);
     const [posts, setPosts] = useState([]);
 
-    const fetchPosts = () => getAsync(Array.of(ListPostsViewModel))(POSTS, {
-        userId,
+    const fetchPosts = (isDifferentUser) => getAsync(Array.of(ListPostsViewModel))(`${POSTS}/user`, {
+        id: userId,
         count: POSTS_PER_FETCH,
         referenceDate: encodeURIComponent(posts.length
             ? [...posts].pop().createdOn
@@ -26,15 +26,17 @@ export const FeedPage = React.memo(function FeedPage({
         .then((data = []) => {
             if (data && data instanceof Array) {
                 setHasMorePosts(!!data.length);
-                const newPosts = [...posts, ...data];
+                const newPosts = isDifferentUser
+                    ? data
+                    : [...posts, ...data];
                 setPosts(newPosts);
             }
         })
         .catch(restManager);
 
     useEffect(() => {
-        fetchPosts();
-    }, []);
+        fetchPosts(true);
+    }, [userId]);
 
     return (
         <Container>

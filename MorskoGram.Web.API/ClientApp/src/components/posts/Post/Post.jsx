@@ -41,7 +41,7 @@ export const Post = React.memo(function Post({
                 .catch(restManager)
                 .then(() => setIsDeleting(false));
         }
-    }, [isDeleting]);
+    }, [isDeleting, dataSource.id, dataSource.creatorEmail]);
 
     useEffect(() => {
         if (isSaving) {

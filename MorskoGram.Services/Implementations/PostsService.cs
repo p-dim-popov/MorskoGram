@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
-    using MorskoGram.Data.Common.Models;
     using MorskoGram.Data.Common.Repositories;
     using MorskoGram.Data.Models;
     using MorskoGram.Services.Mapping;
@@ -125,5 +124,28 @@
 
             await this.likesRepository.SaveChangesAsync();
         }
+
+        private IQueryable<Post> PrepareQueryForSearch(string tags)
+            => tags.Replace("#", "")
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Select(tag => $"#{tag.ToLower()}")
+                .Aggregate(
+                    this.postsRepository.AllAsNoTracking(),
+                    (current, tag)
+                        => current.Where(x => x.Caption.ToLower().Contains(tag)));
+
+        public async Task<ICollection<T>> GetPaginatedByTagsAsync<T>(int skip, int take, string tags)
+            where T : IMapFrom<Post>
+            => await this.PrepareQueryForSearch(tags)
+                .OrderByDescending(x => x.CreatedOn)
+                .ThenByDescending(x => x.ModifiedOn)
+                .To<T>()
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+        public Task<int> GetCountByTagsAsync(string tags)
+            => this.PrepareQueryForSearch(tags)
+                .CountAsync();
     }
 }

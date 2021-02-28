@@ -30,5 +30,10 @@
             where TOut : IMapFrom<Post>;
 
         Task ToggleLikeAsync(Guid id, string userId);
+
+        Task<ICollection<T>> GetPaginatedByTagsAsync<T>(int skip, int take, string tags)
+            where T : IMapFrom<Post>;
+
+        Task<int> GetCountByTagsAsync(string tags);
     }
 }

@@ -11,6 +11,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Routing.Constraints;
+    using MorskoGram.Common;
     using MorskoGram.Services;
     using MorskoGram.Web.ViewModels.Likes;
     using MorskoGram.Web.ViewModels.Posts;
@@ -159,6 +160,21 @@
 
             await this.postsService.ToggleLikeAsync(id.Value, this.UserId);
             return this.Ok();
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(int page, string tags, int count = PostsShowCount)
+        {
+            var pagination = Paginator.GetPagination(page, count);
+            var posts = await this.postsService.GetPaginatedByTagsAsync<PostViewModel>(
+                pagination.Skip, pagination.Take, tags
+            );
+            var allPostsCount = await this.postsService.GetCountByTagsAsync(tags);
+            return this.Json(new SearchDto
+            {
+                AvailableCount = allPostsCount,
+                List = posts,
+            });
         }
     }
 }

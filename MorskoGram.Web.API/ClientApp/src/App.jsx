@@ -3,6 +3,7 @@ import {Route} from 'react-router';
 import {Layout} from './components/Layout';
 import {Home} from './components/Home';
 import {CreatePostPage, PostPage, FeedPage} from './components/posts/pages';
+import {UserPage} from './components/users/pages';
 import FetchData from './components/FetchData';
 import Counter from './components/Counter';
 import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
@@ -24,6 +25,7 @@ export default function App() {
                 path="/posts/:id([0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12})"
                 component={PostPage}
             />
+            <Route path="/users/:id" component={UserPage}/>
             <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes}/>
         </Layout>
     );

@@ -8,7 +8,7 @@ import {ApplicationPaths} from './ApiAuthorizationConstants';
 import {PlusCircle, AccountCircle} from '../icons';
 
 export default class LoginMenu extends Component {
-    static authenticatedView(userName, profilePath, logoutPath) {
+    static authenticatedView(id, profilePath, logoutPath) {
         return (
             <>
                 <NavItem>
@@ -23,7 +23,7 @@ export default class LoginMenu extends Component {
                         </DropdownToggle>
                         <DropdownMenu right>
                             <DropdownItem>
-                                <NavLink tag={Link} className="text-dark" to={`/profiles/${userName}`}>
+                                <NavLink tag={Link} className="text-dark" to={`/users/${id}`}>
                                     View profile
                                 </NavLink>
                             </DropdownItem>
@@ -60,7 +60,7 @@ export default class LoginMenu extends Component {
 
         this.state = {
             isAuthenticated: false,
-            userName: null,
+            id: null,
         };
     }
 
@@ -78,16 +78,17 @@ export default class LoginMenu extends Component {
             authService.isAuthenticated(),
             authService.getUser(),
         ]);
+        window.x = user;
         this.setState({
             isAuthenticated,
-            userName: user && user.name,
+            id: user?.sub,
         });
     }
 
     render() {
         const {
             isAuthenticated,
-            userName,
+            id,
         } = this.state;
         if (!isAuthenticated) {
             const registerPath = `${ApplicationPaths.Register}`;
@@ -99,6 +100,6 @@ export default class LoginMenu extends Component {
             pathname: `${ApplicationPaths.LogOut}`,
             state: {local: true},
         };
-        return LoginMenu.authenticatedView(userName, profilePath, logoutPath);
+        return LoginMenu.authenticatedView(id, profilePath, logoutPath);
     }
 }

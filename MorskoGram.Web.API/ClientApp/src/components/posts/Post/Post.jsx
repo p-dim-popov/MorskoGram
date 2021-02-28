@@ -1,6 +1,6 @@
 ﻿import React, {useState, useEffect, useRef} from 'react';
 import {
-    Button, Card, CardBody, CardImg, CardText, Row, Col, Input, Form
+    Button, Card, CardBody, CardImg, CardText, Row, Col, Input,
 } from 'reactstrap';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
@@ -37,11 +37,11 @@ export const Post = React.memo(function Post({
     useEffect(() => {
         if (isDeleting) {
             deleteAsync(null)(`${POSTS}/${dataSource.id}`)
-                .then(() => history.push(`/profile/${dataSource.creatorEmail}`))
+                .then(() => history.push(`/users/${dataSource.creatorEmail}`))
                 .catch(restManager)
                 .then(() => setIsDeleting(false));
         }
-    }, [isDeleting]);
+    }, [isDeleting, dataSource.id, dataSource.creatorEmail]);
 
     useEffect(() => {
         if (isSaving) {
@@ -84,7 +84,7 @@ export const Post = React.memo(function Post({
                 <CardImg onDoubleClick={likeHandler} src={dataSource.imageLink}/>
                 <CardText>
                     <b>
-                        <Link to={`/profiles/${dataSource.creatorEmail}`}>
+                        <Link to={`/users/${dataSource.creatorId}`}>
                             {dataSource.creatorEmail}
                         </Link>
                     </b>

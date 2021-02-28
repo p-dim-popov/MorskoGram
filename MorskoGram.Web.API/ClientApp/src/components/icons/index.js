@@ -9,4 +9,5 @@
     FaRegHeart as NotLikedHeart,
     FiInstagram as Logo,
     GrEdit as EditIcon,
+    AiFillCloseCircle as CloseCircle,
 } from 'react-icons/all';

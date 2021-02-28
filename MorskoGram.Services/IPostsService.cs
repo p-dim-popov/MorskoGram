@@ -28,5 +28,7 @@
         Task<TOut> EditAsync<TIn, TOut>(Guid id, TIn dto)
             where TIn : IMapTo<Post>
             where TOut : IMapFrom<Post>;
+
+        Task ToggleLikeAsync(Guid id, string userId);
     }
 }

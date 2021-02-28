@@ -11,6 +11,9 @@ export class PostViewModel extends Mergeable {
             this.creatorId = '';
             this.createdOn = '';
             this.caption = '';
+            /**
+             * @type {LikeViewModel[]}
+             */
             this.likes = [];
             this.comments = [];
         }

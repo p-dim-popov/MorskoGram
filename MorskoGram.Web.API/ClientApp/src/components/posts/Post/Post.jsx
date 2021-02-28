@@ -8,30 +8,38 @@ import {useHistory} from 'react-router';
 import {
     LikedHeart, NotLikedHeart, TrashIcon, EditIcon,
 } from '../../icons';
-import {PostViewModel, ListPostsViewModel} from '../../../models/posts';
+import {PostViewModel} from '../../../models/posts';
 import {utcToLocal} from '../../../utils/dateTimeHelper';
 import {POSTS} from '../../../constants/endpoints';
-import {deleteAsync, patchAsync} from '../../../utils/fetcher';
+import {
+    deleteAsync, getAsync, patchAsync, postAsync,
+} from '../../../utils/fetcher';
 import {restManager} from '../../../utils/restManager';
 import authService from '../../api-authorization/AuthorizeService';
 
 export const Post = React.memo(function Post({
     dataSource,
     setDataSource,
+    isInList,
 }) {
     const history = useHistory();
     const [isDeleting, setIsDeleting] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const captionRef = useRef();
-    const [user, setUser] = useState(null);
+    const [loggedUser, setLoggedUser] = useState(null);
 
-    const likeHandler = () => {
-        console.log(dataSource.id);
+    const likeHandler = async () => {
+        try {
+            await postAsync(null)(`${POSTS}/like/${dataSource.id}`);
+            setDataSource(await getAsync(PostViewModel)(`${POSTS}/${dataSource.id}`));
+        } catch (e) {
+            restManager(e);
+        }
     };
 
     useEffect(() => {
-        authService.getUser().then(setUser);
+        authService.getUser().then(setLoggedUser);
     }, []);
 
     useEffect(() => {
@@ -58,7 +66,7 @@ export const Post = React.memo(function Post({
     return (
         <Card>
             <CardBody>
-                {dataSource instanceof PostViewModel && user?.name === dataSource.creatorEmail && (
+                {!isInList && loggedUser?.name === dataSource.creatorEmail && (
                     <Row>
                         <Col>
                             <Button
@@ -81,7 +89,7 @@ export const Post = React.memo(function Post({
                         </Col>
                     </Row>
                 )}
-                <CardImg onDoubleClick={likeHandler} src={dataSource.imageLink}/>
+                <CardImg onDoubleClick={loggedUser?.sub ? likeHandler : () => {}} src={dataSource.imageLink}/>
                 <CardText>
                     <b>
                         <Link to={`/users/${dataSource.creatorId}`}>
@@ -113,21 +121,26 @@ export const Post = React.memo(function Post({
                         </>
                     )
                     : <CardText>{dataSource.caption}</CardText>}
-                <Button onClick={likeHandler}>
-                    <NotLikedHeart/>
-                    <LikedHeart/>
-                </Button>
-                {' '}
+                {loggedUser?.sub && (
+                    <>
+                        <Button onClick={likeHandler}>
+                            {dataSource.likes.some((x) => x.giverId === loggedUser.sub)
+                                ? <LikedHeart/>
+                                : <NotLikedHeart/>}
+                        </Button>
+                        {' '}
+                    </>
+                )}
                 <Button
                     onClick={() => history.push(`/posts/${dataSource.id}`)}
-                    disabled={dataSource instanceof PostViewModel}
+                    disabled={!isInList}
                 >
                     <span>
-                        {`${dataSource.likesCount || dataSource.likes?.length || 0} likes`}
+                        {`${dataSource.likes?.length || 0} likes`}
                     </span>
                     {' '}
                     <span>
-                        {`${dataSource.commentsCount || dataSource.comments?.length || 0} comments`}
+                        {`${dataSource.comments?.length || 0} comments`}
                     </span>
                 </Button>
             </CardBody>
@@ -136,13 +149,11 @@ export const Post = React.memo(function Post({
 });
 
 Post.propTypes = {
-    dataSource: PropTypes.oneOfType([
-        PropTypes.instanceOf(PostViewModel),
-        PropTypes.instanceOf(ListPostsViewModel),
-    ]).isRequired,
-    setDataSource: PropTypes.func,
+    dataSource: PropTypes.instanceOf(PostViewModel).isRequired,
+    setDataSource: PropTypes.func.isRequired,
+    isInList: PropTypes.bool,
 };
 
 Post.defaultProps = {
-    setDataSource: (x) => x,
+    isInList: false,
 };

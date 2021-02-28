@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import {getAsync} from '../../../../utils/fetcher';
 import {POSTS} from '../../../../constants/endpoints';
 import {Post} from '../../Post';
-import {ListPostsViewModel} from '../../../../models/posts';
+import {ListPostsViewModel, PostViewModel} from '../../../../models/posts';
 import {restManager} from '../../../../utils/restManager';
 
 const POSTS_PER_FETCH = 2;
@@ -16,7 +16,7 @@ export const FeedPage = React.memo(function FeedPage({
     const [hasMorePosts, setHasMorePosts] = useState(true);
     const [posts, setPosts] = useState([]);
 
-    const fetchPosts = (isDifferentUser) => getAsync(Array.of(ListPostsViewModel))(`${POSTS}/user`, {
+    const fetchPosts = (isDifferentUser) => getAsync(Array.of(PostViewModel))(`${POSTS}/user`, {
         id: userId,
         count: POSTS_PER_FETCH,
         referenceDate: encodeURIComponent(posts.length
@@ -49,7 +49,13 @@ export const FeedPage = React.memo(function FeedPage({
                         loader={<h4>Loading...</h4>}
                     >
                         {posts.map((post) => (
-                            <Post key={post.id} dataSource={post}/>
+                            <Post
+                                key={post.id}
+                                dataSource={post}
+                                setDataSource={(newPost) => setPosts(posts
+                                    .map((oldPost) => (oldPost.id === post.id ? newPost : oldPost)))}
+                                isInList
+                            />
                         ))}
                     </InfiniteScroll>
                 </Col>

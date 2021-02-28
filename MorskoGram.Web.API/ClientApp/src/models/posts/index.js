@@ -1,2 +1,1 @@
-﻿export * from './ListPostsViewModel';
-export * from './PostViewModel';
+﻿export * from './PostViewModel';

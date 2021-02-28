@@ -103,7 +103,7 @@ namespace MorskoGram.Web.API
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             AutoMapperConfig.RegisterMappings(
-                typeof(ListPostsViewModel).GetTypeInfo().Assembly // Get the view models assembly
+                typeof(PostViewModel).GetTypeInfo().Assembly // Get the view models assembly
             );
 
             // Seed data on application startup

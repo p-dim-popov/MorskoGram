@@ -10,7 +10,9 @@
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Routing.Constraints;
     using MorskoGram.Services;
+    using MorskoGram.Web.ViewModels.Likes;
     using MorskoGram.Web.ViewModels.Posts;
 
     [ApiController]
@@ -42,14 +44,14 @@
         {
             if (id is not null)
             {
-                return this.Json(await this.postsService.GetFewForUserAsync<ListPostsViewModel>(
+                return this.Json(await this.postsService.GetFewForUserAsync<PostViewModel>(
                     id.ToString(), referenceDate, count
                 ));
             }
 
             if (await this.IsUserAuthenticated())
             {
-                return this.Json(await this.postsService.GetFewForFeed<ListPostsViewModel>(
+                return this.Json(await this.postsService.GetFewForFeed<PostViewModel>(
                     this.UserId, referenceDate, count
                 ));
             }

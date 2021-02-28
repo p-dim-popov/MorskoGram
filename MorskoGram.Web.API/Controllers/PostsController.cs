@@ -145,5 +145,18 @@
             await this.postsService.DeleteAsync(id);
             return this.Ok();
         }
+
+        [Authorize]
+        [HttpPost("like/{id:required}")]
+        public async Task<IActionResult> ToggleLike(Guid? id)
+        {
+            if (id is null)
+            {
+                return this.BadRequest();
+            }
+
+            await this.postsService.ToggleLikeAsync(id.Value, this.UserId);
+            return this.Ok();
+        }
     }
 }

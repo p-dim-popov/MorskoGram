@@ -14,16 +14,19 @@
     {
         private readonly IRepository<Post> postsRepository;
         private readonly IRepository<Follow> followsRepository;
+        private readonly IRepository<Like> likesRepository;
         private readonly IDropboxService dropboxService;
 
         public PostsService(
             IRepository<Post> postsRepository,
             IRepository<Follow> followsRepository,
+            IRepository<Like> likesRepository,
             IDropboxService dropboxService
         )
         {
             this.postsRepository = postsRepository;
             this.followsRepository = followsRepository;
+            this.likesRepository = likesRepository;
             this.dropboxService = dropboxService;
         }
 
@@ -102,6 +105,25 @@
                 .Where(x => x.Id == id)
                 .To<TOut>()
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task ToggleLikeAsync(Guid id, string userId)
+        {
+            var like = await this.likesRepository.All().FirstOrDefaultAsync(x => x.GiverId == userId && x.PostId == id);
+            if (like is null)
+            {
+                await this.likesRepository.AddAsync(new Like
+                {
+                    GiverId = userId,
+                    PostId = id,
+                });
+            }
+            else
+            {
+                this.likesRepository.Delete(like);
+            }
+
+            await this.likesRepository.SaveChangesAsync();
         }
     }
 }

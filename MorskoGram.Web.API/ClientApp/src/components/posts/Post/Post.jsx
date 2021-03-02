@@ -120,7 +120,22 @@ export const Post = React.memo(function Post({
                             </Button>
                         </>
                     )
-                    : <CardText>{dataSource.caption}</CardText>}
+                    : (
+                        <CardText>
+                            {dataSource.caption
+                                .split(' ')
+                                .map((word) => (word.includes('#')
+                                    ? (
+                                        <>
+                                            <Link to={`/search?tags=${encodeURIComponent(word.replaceAll('#', ''))}`}>
+                                                {word}
+                                            </Link>
+                                            {' '}
+                                        </>
+                                    )
+                                    : `${word} `))}
+                        </CardText>
+                    )}
                 {loggedUser?.sub && (
                     <>
                         <Button onClick={likeHandler}>

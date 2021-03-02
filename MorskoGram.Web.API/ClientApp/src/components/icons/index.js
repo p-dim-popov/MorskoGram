@@ -10,4 +10,5 @@
     FiInstagram as Logo,
     GrEdit as EditIcon,
     AiFillCloseCircle as CloseCircle,
+    IoSearchSharp as SearchIcon,
 } from 'react-icons/all';

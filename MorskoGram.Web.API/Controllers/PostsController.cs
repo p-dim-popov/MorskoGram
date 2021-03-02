@@ -163,7 +163,7 @@
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> Search(int page, string tags, int count = PostsShowCount)
+        public async Task<IActionResult> Search(int page, string tags = "", int count = PostsShowCount)
         {
             var pagination = Paginator.GetPagination(page, count);
             var posts = await this.postsService.GetPaginatedByTagsAsync<PostViewModel>(

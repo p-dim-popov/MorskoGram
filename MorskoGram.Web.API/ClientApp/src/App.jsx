@@ -2,7 +2,9 @@ import React from 'react';
 import {Route} from 'react-router';
 import {Layout} from './components/Layout';
 import {Home} from './components/Home';
-import {CreatePostPage, PostPage, FeedPage} from './components/posts/pages';
+import {
+    CreatePostPage, PostPage, FeedPage, SearchPage,
+} from './components/posts/pages';
 import {UserPage} from './components/users/pages';
 import FetchData from './components/FetchData';
 import Counter from './components/Counter';
@@ -26,6 +28,7 @@ export default function App() {
                 component={PostPage}
             />
             <Route path="/users/:id" component={UserPage}/>
+            <Route path="/search" component={SearchPage}/>
             <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes}/>
         </Layout>
     );

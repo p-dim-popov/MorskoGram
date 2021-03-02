@@ -12,7 +12,7 @@ import {restManager} from '../../../../utils/restManager';
 import {SearchIcon} from '../../../icons';
 
 const getSearchUrl = (tags, page, itemsPerPage) => '/search?'
-        + `tags=${tags}`
+        + `tags=${encodeURIComponent(tags)}`
         + `&page=${page}`
         + `&itemsPerPage=${itemsPerPage}`;
 

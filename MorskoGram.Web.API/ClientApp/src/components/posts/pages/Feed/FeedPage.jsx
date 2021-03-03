@@ -5,10 +5,10 @@ import PropTypes from 'prop-types';
 import {getAsync} from '../../../../utils/fetcher';
 import {POSTS} from '../../../../constants/endpoints';
 import {Post} from '../../Post';
-import {ListPostsViewModel, PostViewModel} from '../../../../models/posts';
+import {PostViewModel} from '../../../../models/posts';
 import {restManager} from '../../../../utils/restManager';
 
-const POSTS_PER_FETCH = 2;
+const POSTS_PER_FETCH = 5;
 
 export const FeedPage = React.memo(function FeedPage({
     userId,
@@ -19,9 +19,9 @@ export const FeedPage = React.memo(function FeedPage({
     const fetchPosts = (isDifferentUser) => getAsync(Array.of(PostViewModel))(`${POSTS}/user`, {
         id: userId,
         count: POSTS_PER_FETCH,
-        referenceDate: encodeURIComponent(posts.length
+        referenceDate: posts.length
             ? [...posts].pop().createdOn
-            : new Date().toISOString()),
+            : new Date().toISOString(),
     })
         .then((data = []) => {
             if (data && data instanceof Array) {

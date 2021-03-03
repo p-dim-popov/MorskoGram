@@ -1,6 +1,6 @@
 {
   "name": "morsko-gram",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "private": true,
   "dependencies": {
     "bootstrap": "^4.1.3",

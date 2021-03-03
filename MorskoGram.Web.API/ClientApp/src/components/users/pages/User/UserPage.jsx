@@ -60,7 +60,7 @@ export const UserPage = React.memo(function UserPage() {
                             type={FollowTypes.follower}
                         />
                     </Col>
-                    {loggedUser?.sub !== userId && (
+                    {loggedUser && loggedUser?.sub !== userId && (
                         <Col>
                             {user.followers.some((x) => x.followerId === loggedUser.sub)
                                 ? (<Button onClick={toggleFollow} color="danger">Unfollow</Button>)

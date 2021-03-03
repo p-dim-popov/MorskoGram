@@ -89,7 +89,7 @@ const fromRequest = (request) =>
 export const getAsync = fromRequest(
     (_) => fetch(`${_.endpoint}?${Object.entries(_.data || {})
         .filter(([, v]) => v)
-        .map((x) => x.join('='))
+        .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
         .join('&')}`, generateOptions(_.token, null, {
         method: 'GET',
         ..._.overrides,

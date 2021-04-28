@@ -1,19 +1,14 @@
 ﻿namespace MorskoGram.Web.API.Controllers
 {
     using System;
-    using System.Collections.Generic;
+    using System.IO;
     using System.Net.Mime;
-    using System.Text;
     using System.Text.Json;
     using System.Threading.Tasks;
-    using IdentityServer4.Extensions;
-    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Routing.Constraints;
     using MorskoGram.Common;
     using MorskoGram.Services;
-    using MorskoGram.Web.ViewModels.Likes;
     using MorskoGram.Web.ViewModels.Posts;
 
     [ApiController]
@@ -24,16 +19,22 @@
         private const int PostsShowCount = 5;
         private readonly IPostsService postsService;
         private readonly IDropboxService dropboxService;
+        private readonly IImageRecognitionService imageRecognitionService;
+        private readonly IImageRecognitionService.AllowedImageTags allowedImageTags;
 
         public PostsController(
             IPostsService postsService,
             IDropboxService dropboxService,
             IUsersService usersService,
-            JsonSerializerOptions jsonSerializerOptions)
+            JsonSerializerOptions jsonSerializerOptions,
+            IImageRecognitionService imageRecognitionService,
+            IImageRecognitionService.AllowedImageTags allowedImageTags)
             : base(jsonSerializerOptions, usersService)
         {
             this.postsService = postsService;
             this.dropboxService = dropboxService;
+            this.imageRecognitionService = imageRecognitionService;
+            this.allowedImageTags = allowedImageTags;
         }
 
         [HttpGet("user")]
@@ -72,8 +73,25 @@
                 return this.BadRequest(this.ModelState);
             }
 
+            byte[] imageBytes;
+            await using (var ms = new MemoryStream())
+            {
+                await model.Image.OpenReadStream().CopyToAsync(ms);
+                imageBytes = ms.ToArray();
+            }
+
+            if (!await this.imageRecognitionService.ImageIsDescribedByAsync(this.allowedImageTags.List, imageBytes))
+            {
+                return this.BadRequest("Image is not related to the sea!");
+            }
+
             var imageId = Guid.NewGuid();
-            var imageLink = await this.dropboxService.UploadAsync(imageId, model.Image.OpenReadStream());
+            string imageLink;
+            await using (var ms = new MemoryStream(imageBytes))
+            {
+                imageLink = await this.dropboxService.UploadAsync(imageId, ms);
+            }
+
             var dto = new CreatePostDto
             {
                 CreatorId = this.UserId,

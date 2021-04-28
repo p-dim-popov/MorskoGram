@@ -9,7 +9,7 @@
         <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
         <UserSecretsId>a009971c-4dcc-49e3-b602-b3bccc010bc8</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <Version>0.7.1+build$([System.DateTime]::UtcNow.ToString("yyyyMMddmmss"))</Version>
+        <Version>0.7.2+build$([System.DateTime]::UtcNow.ToString("yyyyMMddmmss"))</Version>
 <!--        <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>-->
     </PropertyGroup>
 
@@ -28,6 +28,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.2" />
+        <PackageReference Include="RestSharp" Version="106.11.7" />
     </ItemGroup>
 
     <ItemGroup>

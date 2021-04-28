@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/MorskoGram.Web.API/app.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="PostgreSQL - dbgvoku5s8bbkj@ec2-52-209-134-160.eu-west-1.compute.amazonaws.com" uuid="c3fa35f5-f008-4a8f-b53b-1a243be2944e">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ec2-52-209-134-160.eu-west-1.compute.amazonaws.com:5432/dbgvoku5s8bbkj</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

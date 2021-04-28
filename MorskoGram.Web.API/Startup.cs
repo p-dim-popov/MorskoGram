@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 namespace MorskoGram.Web.API
 {
     using System;
+    using System.Net.Http;
     using System.Reflection;
     using System.Text.Json;
     using System.Text.RegularExpressions;
@@ -29,6 +30,7 @@ namespace MorskoGram.Web.API
     using MorskoGram.Web.API.Data.Seeding;
     using MorskoGram.Web.ViewModels;
     using MorskoGram.Web.ViewModels.Posts;
+    using RestSharp;
 
     public class Startup
     {
@@ -84,6 +86,11 @@ namespace MorskoGram.Web.API
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             });
+            services.AddSingleton(
+                new IImageRecognitionService.AllowedImageTags
+                {
+                    List = this.Configuration.GetSection("AllowedImageTags").Value.Split(",")
+                });
 
             // Data Repositories
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
@@ -92,11 +99,15 @@ namespace MorskoGram.Web.API
                 ? Environment.GetEnvironmentVariable("DROPBOX_ACCESS_TOKEN")
                 : this.Configuration.GetSection("DropboxAccessToken").Value));
 
+            services.AddScoped<IRestClient, RestClient>();
+            services.AddScoped<IRestRequest, RestRequest>();
+
             // Data Services
             services.AddTransient<IDropboxService, DropboxService>();
             services.AddTransient<IPostsService, PostsService>();
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IFollowsService, FollowsService>();
+            services.AddTransient<IImageRecognitionService, ImaggaService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
